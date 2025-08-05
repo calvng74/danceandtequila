@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Dance and Tequila! - Formulario de Comentarios con Gemini</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .form-label {
+            @apply mb-2 text-lg font-bold text-gray-200;
+        }
+        .form-input, .form-textarea, .form-select {
+            @apply w-full p-3 bg-gray-800 border-2 border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition-colors;
+        }
+        .form-section {
+            @apply bg-gray-900/80 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-lg border border-gray-800;
+        }
+        .rating-group {
+            @apply flex flex-wrap items-center justify-center gap-2;
+        }
+        .rating-label {
+            @apply w-12 h-12 flex items-center justify-center bg-gray-800 text-white rounded-full cursor-pointer transition-all duration-300 ease-in-out;
+        }
+        .rating-input:checked + .rating-label {
+            @apply bg-pink-500 scale-110 shadow-lg shadow-pink-500/30;
+        }
+        .rating-input {
+            @apply hidden;
+        }
+        .checkbox-label {
+            @apply flex items-center gap-3 p-3 bg-gray-800 rounded-lg cursor-pointer transition-colors hover:bg-gray-700;
+        }
+        .checkbox-input:checked + .checkbox-label {
+            @apply bg-pink-500 text-white ring-2 ring-pink-400;
+        }
+        .checkbox-input {
+            @apply hidden;
+        }
+        .gemini-button {
+             @apply w-full mt-4 py-4 px-6 bg-gradient-to-r from-teal-400 to-blue-500 hover:from-teal-500 hover:to-blue-600 text-white font-bold text-lg rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="min-h-screen bg-cover bg-center bg-fixed" style="background-image: url('https://images.unsplash.com/photo-1582719353202-a075e73d3a9a?q=80&w=2070&auto=format&fit=crop');">
+        <div class="min-h-screen bg-black/70 flex items-center justify-center p-4">
+            <div class="max-w-2xl w-full mx-auto space-y-8">
+
+                <!-- Header -->
+                <div class="text-center">
+                    <h1 class="text-4xl md:text-6xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 animate-pulse">
+                        ¡Dance and Tequila!
+                    </h1>
+                    <p class="mt-2 text-xl text-gray-300">¡Queremos saber tu opinión!</p>
+                </div>
+
+                <!-- Form -->
+                <form id="feedbackForm" class="space-y-6">
+                    <!-- Overall Experience -->
+                    <div class="form-section">
+                        <label class="form-label block text-center">1. ¿Cómo calificarías tu experiencia general?</label>
+                        <div class="rating-group mt-4">
+                            <div class="text-gray-400 mr-2">Mala</div>
+                            <input type="radio" id="rate-1" name="overall_rating" value="1" class="rating-input"><label for="rate-1" class="rating-label">1</label>
+                            <input type="radio" id="rate-2" name="overall_rating" value="2" class="rating-input"><label for="rate-2" class="rating-label">2</label>
+                            <input type="radio" id="rate-3" name="overall_rating" value="3" class="rating-input"><label for="rate-3" class="rating-label">3</label>
+                            <input type="radio" id="rate-4" name="overall_rating" value="4" class="rating-input"><label for="rate-4" class="rating-label">4</label>
+                            <input type="radio" id="rate-5" name="overall_rating" value="5" class="rating-input"><label for="rate-5" class="rating-label">5</label>
+                            <div class="text-gray-400 ml-2">¡Increíble!</div>
+                        </div>
+                    </div>
+                    <!-- What you liked -->
+                    <div class="form-section">
+                        <label for="liked" class="form-label">2. ¿Qué fue lo mejor para ti?</label>
+                        <p class="text-gray-400 mb-4 text-sm">Cuéntanos sobre tus DJs favoritos, momentos o cualquier cosa que hayas disfrutado especialmente.</p>
+                        <textarea id="liked" name="liked" rows="4" class="form-textarea" placeholder="Ej: Los visuales estuvieron increíbles, me encantó el set de cierre, gran selección de tequila..."></textarea>
+                    </div>
+                    <!-- What was missing -->
+                    <div class="form-section">
+                        <label for="missing" class="form-label">3. ¿Qué podríamos mejorar?</label>
+                        <p class="text-gray-400 mb-4 text-sm">¿Faltó algo? ¿Algún problema con el sonido, las filas o el lugar? Tu opinión honesta nos ayuda a crecer.</p>
+                        <textarea id="missing" name="missing" rows="4" class="form-textarea" placeholder="Ej: Más estaciones de agua, sets más largos, música diferente en la segunda sala..."></textarea>
+                    </div>
+                    <!-- Music Genre -->
+                    <div class="form-section">
+                        <label class="form-label">4. ¿De qué géneros musicales te gustaría más?</label>
+                         <p class="text-gray-400 mb-4 text-sm">Selecciona todos los que apliquen.</p>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                            <input type="checkbox" id="genre-house" name="genre" value="house" class="checkbox-input"><label for="genre-house" class="checkbox-label">House</label>
+                            <input type="checkbox" id="genre-techno" name="genre" value="techno" class="checkbox-input"><label for="genre-techno" class="checkbox-label">Techno</label>
+                            <input type="checkbox" id="genre-trance" name="genre" value="trance" class="checkbox-input"><label for="genre-trance" class="checkbox-label">Trance</label>
+                            <input type="checkbox" id="genre-dnb" name="genre" value="dnb" class="checkbox-input"><label for="genre-dnb" class="checkbox-label">Drum & Bass</label>
+                            <input type="checkbox" id="genre-dubstep" name="genre" value="dubstep" class="checkbox-input"><label for="genre-dubstep" class="checkbox-label">Dubstep</label>
+                            <input type="checkbox" id="genre-other" name="genre" value="other" class="checkbox-input"><label for="genre-other" class="checkbox-label">Otro</label>
+                        </div>
+                    </div>
+                    <!-- Likelihood to return -->
+                    <div class="form-section">
+                        <label class="form-label block text-center">5. ¿Qué tan probable es que recomiendes "¡Dance and Tequila!" a un amigo?</label>
+                        <div class="rating-group mt-4">
+                            <div class="text-gray-400 mr-2">Poco Probable</div>
+                            <input type="radio" id="rec-1" name="recommend" value="1" class="rating-input"><label for="rec-1" class="rating-label">1</label>
+                            <input type="radio" id="rec-2" name="recommend" value="2" class="rating-input"><label for="rec-2" class="rating-label">2</label>
+                            <input type="radio" id="rec-3" name="recommend" value="3" class="rating-input"><label for="rec-3" class="rating-label">3</label>
+                            <input type="radio" id="rec-4" name="recommend" value="4" class="rating-input"><label for="rec-4" class="rating-label">4</label>
+                            <input type="radio" id="rec-5" name="recommend" value="5" class="rating-input"><label for="rec-5" class="rating-label">5</label>
+                            <div class="text-gray-400 ml-2">Muy Probable</div>
+                        </div>
+                    </div>
+                    <!-- Submit Button -->
+                    <div id="submit-container">
+                        <button type="submit" class="w-full py-4 px-6 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold text-lg rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out">
+                            Enviar Comentarios
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Gemini Section -->
+                <div id="geminiSection" class="hidden text-center form-section">
+                    <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">¡Gracias!</h2>
+                    <p class="mt-2 text-gray-300">Tus comentarios son muy valiosos. ¿Quieres ver algunas ideas para el próximo evento basadas en tu opinión?</p>
+                    <button id="generateIdeasBtn" class="gemini-button">✨ Generar Ideas para el Próximo Evento</button>
+                    <div id="loader" class="hidden loader"></div>
+                    <div id="geminiResult" class="mt-6 text-left p-4 bg-gray-800/50 rounded-lg whitespace-pre-wrap"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('feedbackForm');
+        const geminiSection = document.getElementById('geminiSection');
+        const generateIdeasBtn = document.getElementById('generateIdeasBtn');
+        const loader = document.getElementById('loader');
+        const geminiResult = document.getElementById('geminiResult');
+
+        // This function handles the form submission
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            // Hide the form and show the Gemini section
+            form.style.display = 'none';
+            geminiSection.style.display = 'block';
+
+            // Scroll to the top to show the message clearly
+            window.scrollTo(0, 0);
+        });
+
+        // This function calls the Gemini API
+        generateIdeasBtn.addEventListener('click', async () => {
+            const likedText = document.getElementById('liked').value;
+            const missingText = document.getElementById('missing').value;
+            
+            // Disable button and show loader
+            generateIdeasBtn.disabled = true;
+            loader.style.display = 'block';
+            geminiResult.innerHTML = '';
+
+            const prompt = `Basado en los siguientes comentarios de un asistente a un evento de música electrónica llamado "Dance and Tequila!", genera 3 ideas creativas y detalladas para el próximo evento.
+
+            Cosas que le gustaron al asistente: "${likedText}"
+            Cosas que cree que podrían mejorar o faltaron: "${missingText}"
+
+            Para cada idea, sugiere un tema, posibles DJs o estilos musicales, y una característica única relacionada con el tequila. Formatea la respuesta de manera atractiva.`;
+
+            try {
+                // This is the function to call the Gemini API
+                const generatedText = await callGemini(prompt);
+                geminiResult.innerText = generatedText;
+            } catch (error) {
+                console.error('Error calling Gemini API:', error);
+                geminiResult.innerText = 'Lo sentimos, ocurrió un error al generar las ideas. Por favor, inténtalo de nuevo más tarde.';
+            } finally {
+                // Re-enable button and hide loader
+                generateIdeasBtn.disabled = false;
+                loader.style.display = 'none';
+            }
+        });
+
+        // Function to call Gemini API with exponential backoff
+        async function callGemini(prompt, maxRetries = 3) {
+            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // API key is handled by the environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API request failed with status ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error('Invalid response structure from API');
+                    }
+                } catch (error) {
+                    console.error(`Attempt ${i + 1} failed:`, error);
+                    if (i === maxRetries - 1) throw error; // Rethrow last error
+                    const delay = Math.pow(2, i) * 1000; // Exponential backoff
+                    await new Promise(res => setTimeout(res, delay));
+                }
+            }
+            throw new Error('Failed to get response from API after multiple retries.');
+        }
+    </script>
+</body>
+</html>
